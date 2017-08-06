@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Dashboard</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -30,11 +30,11 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <style>
-    #InitBtn
+    #LoadBICBtn
     {
       margin-bottom: 20px;
     }
-    #PublishBtn
+    #AssignTruckersBtn
     {
       margin-bottom: 20px;
     }
@@ -77,24 +77,12 @@
             <li><a href="#">Analytics</a></li>
             <li><a href="#">Export</a></li>
           </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item</a></li>
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-            <li><a href="">More navigation</a></li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-          </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Dashboard</h1>
 
-          <button id="InitBtn">Initialise</button>
-          <button id="PublishBtn">Publish</button>
+          <button id="LoadBICBtn">Load BICs</button>
+          <button id="AssignTruckersBtn">Assign Truckers</button>
 
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
@@ -119,18 +107,19 @@
             </div>
           </div>
 
-          <h2 class="sub-header">Slots</h2>
+          <h2 class="sub-header">BIC Assignments</h2>
           <div class="table-responsive">
             <table class="table table-striped" id="availableSlots">
-              <thead>
+               <thead>
                 <tr>
-                  <th>Time</th>
                   <th>BIC</th>
                   <th>Container Size</th>
                   <th>In/Out Gate</th>
                   <th>Full/Empty</th>
                   <th>Container Status</th>
                   <th>Destination</th>
+                  <th>Pick-up Time</th>
+                  <th>Trucker ID</th>
                 </tr>
               </thead>
             </table>
@@ -149,15 +138,28 @@
     <script src="js/holder.min.js"></script>
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
 
     <script>
-      $(document).ready(function() {
-        var html = '';
-for(var i = 0; i < 10; i++)
-            html += '<tr><td>' + "test" + 
-                    '</td><td>' + "test2" + '</td></tr>';
-$('#availableSlots tr').first().after(html);
+      $("#LoadBICBtn").click(function() {
+        d3.text("new_imports.csv", function(data) {
+        var parsedCSV = d3.csv.parseRows(data);
+
+        var container = d3.select("#availableSlots")
+            .selectAll("tr")
+                .data(parsedCSV).enter()
+                .append("tr")
+
+            .selectAll("td")
+                .data(function(d) { return d; }).enter()
+                .append("td")
+                .text(function(d) { return d; });
         })
+      });
+
+      $("#AssignTruckersBtn").click(function() {
+
+      });
     </script>
   </body>
 </html>
