@@ -141,6 +141,10 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
 
     <script>
+      function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes*60000);
+      }
+
       $("#LoadBICBtn").click(function() {
         d3.text("new_imports.csv", function(data) {
         var parsedCSV = d3.csv.parseRows(data);
@@ -158,7 +162,19 @@
       });
 
       $("#AssignTruckersBtn").click(function() {
-
+        var today = new Date();
+        today.setHours(0);
+        today.setMilliseconds(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        var truckerID = 0;
+        $("#availableSlots").find("tr").each(function(i, el) {
+          var $tds = $(this).find('td');
+          $tds.eq(6).text(today.toLocaleTimeString());
+          today = addMinutes(today, 15);
+          $tds.eq(7).text(truckerID);
+          truckerID += 1;
+        });
       });
     </script>
   </body>
