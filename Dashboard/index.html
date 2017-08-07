@@ -58,14 +58,14 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project name</a>
+          <a class="navbar-brand" href="#">TurnTime</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="#">Dashboard</a></li>
             <li><a href="#">Settings</a></li>
             <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
+            <li><a href="help.html">Help</a></li>
           </ul>
           <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="Search...">
@@ -78,10 +78,9 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+            <li class="active"><a href="#">Appointment System <span class="sr-only">(current)</span></a></li>
+            <li><a href="gview.mov">Download demo video</a></li>
+            <li><a href="help.html">Help</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -94,23 +93,18 @@
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="google-calendar.jpg" width="200" height="200" class="img-responsive" alt="Calendar" onclick="listUpcomingEvents()">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
+              <h4>Calendar</h4>
+              <span class="text-muted">Scheduled pick-ups</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
+              <img src="google-earth.jpg" width="200" height="200" class="img-responsive" alt="G-View" onclick="window.open('https://earth.google.com/web/messages/C6JDWD542/','_blank');">
+              <h4>G-View</h4>
+              <span class="text-muted">Google Earth</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
+              <img src="images.jpg" width="200" height="200" alt="Statistics" onclick="window.open('stats.html','_blank');">
+              <h4>Statistics</h4>
+              <span class="text-muted">Historical data</span>
             </div>
           </div>
 
@@ -153,6 +147,7 @@
       }
 
       $("#LoadBICBtn").click(function() {
+        $("availableSlots").find("tr:gt(0)").remove();
         d3.text("new_imports.csv", function(data) {
         var parsedCSV = d3.csv.parseRows(data);
 
@@ -166,6 +161,7 @@
                 .append("td")
                 .text(function(d) { return d; });
         })
+        $("#LoadBICBtn").attr('disabled','disabled');
       });
 
       $("#AssignTruckersBtn").click(function() {        
@@ -174,24 +170,33 @@
         today.setMilliseconds(0);
         today.setMinutes(0);
         today.setSeconds(0);
-        var truckerID = 0;
+        var truckerID = 1;
+        var isFirstEntry = true;
         $("#availableSlots").find("tr").each(function(i, el) {
-          var dropChance = 0.1;
-          var $tds = $(this).find('td');
-          $tds.eq(6).text(today.toLocaleTimeString());
-          today = addMinutes(today, 15);
-
-          if (Math.random() < dropChance)
+          if (isFirstEntry)
           {
-            //drop this row
-            $(this).css('background-color','red');
+              isFirstEntry = false;
           }
           else
           {
-            $tds.eq(7).text(truckerID);
-            truckerID += 1;            
+              var dropChance = 0.1;
+              var $tds = $(this).find('td');
+              $tds.eq(6).text(today.toLocaleTimeString());
+              today = addMinutes(today, 15);
+
+              if (Math.random() < dropChance)
+              {
+                //drop this row
+                $(this).css('background-color','red');
+              }
+              else
+              {
+                $tds.eq(7).text(truckerID);
+                truckerID += 1;            
+              }
           }
         });
+        $("#AssignTruckersBtn").attr('disabled','disabled');
       });
 
       $("#NotifyTruckersBtn").click(function() {
